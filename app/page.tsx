@@ -1059,7 +1059,7 @@ export default function HomePage() {
           model_id: "default", // Use a default or dynamically select model_id if needed
           features: {
             TSP: airQualityData.pm10 * 1.5, // TSP is often approximated by PM10 * 1.5 or similar
-            PM25: airQualityData.pm25,
+            'PM2.5': airQualityData.pm25,
             O3: airQualityData.o3,
             CO: airQualityData.co,
             NO2: airQualityData.no2,
@@ -1075,22 +1075,32 @@ export default function HomePage() {
           body: JSON.stringify(requestBody),
         })
 
-        const result: PredictionResult = await response.json()
+        const result = await response.json()
 
         if (result.success) {
-          setPrediction(result)
+          // Cấu trúc lại để khớp với code hiển thị Object.entries
+          const formattedPrediction = {
+            category: result.prediction,
+            confidence: parseFloat(result.confidence.replace('%', '')) || 0.85,
+            aqi: airQualityData.aqi || 0,
+            all_probabilities: result.all_probabilities || {} // Cực kỳ quan trọng
+          };
 
-          // Create a stable trend object without random predictions
+          setPrediction({
+            ...result,
+            prediction: formattedPrediction
+          })
+
           const trend: AQITrend = {
             direction: "stable",
             change: 0,
-            forecast2h: "",
-            forecast6h: "",
+            forecast2h: "Ổn định",
+            forecast6h: "Không đổi",
           }
           setAqiTrend(trend)
 
           const recs = generateRecommendations(
-            result.prediction.category,
+            formattedPrediction.category,
             userGroup,
             trend,
             airQualityData.temp,
@@ -1100,22 +1110,21 @@ export default function HomePage() {
 
           const historyEntry: PredictionHistory = {
             id: Date.now().toString(),
-            timestamp: result.timestamp,
-            location: selectedLocation?.name || "Unknown Location", // Use selectedLocation name or a default
-            category: result.prediction.category,
-            confidence: result.prediction.confidence,
-            aqi: airQualityData.aqi,
+            timestamp: new Date().toISOString(),
+            location: selectedLocation?.name || "Vị trí hiện tại",
+            category: formattedPrediction.category,
+            confidence: formattedPrediction.confidence,
+            aqi: airQualityData.aqi || 0,
             pm25: airQualityData.pm25,
             pm10: airQualityData.pm10,
           }
           setPredictionHistory((prev) => [historyEntry, ...prev])
+
         } else {
-          console.error("Prediction API returned success: false", result)
-          // Handle error display to user if result.success is false
+          alert("Lỗi AI: " + result.error)
         }
       } catch (error) {
-        console.error("Prediction error:", error)
-        // Handle network or other errors
+        alert("Không thể kết nối tới Flask API!")
       }
     }
 
@@ -1434,17 +1443,18 @@ export default function HomePage() {
                           <div className="bg-slate-800/30 rounded-lg p-3">
                             <div className="text-xs text-white mb-2">Xác suất các phân loại</div>
                             <div className="space-y-1">
-                              {Object.entries(prediction.prediction.all_probabilities).map(([cat, prob]) => (
-                                <div key={cat} className="flex items-center gap-2">
-                                  <span className="text-xs text-white w-16">{cat}</span>
-                                  <div className="flex-1 bg-slate-700 rounded-full h-2">
-                                    <div
-                                      className="bg-emerald-500 h-2 rounded-full transition-all"
-                                      style={{ width: `${(prob as number) * 100}%` }}
-                                    />
+                              {/* Sửa lại đoạn hiển thị xác suất như sau */}
+                              {Object.entries(prediction?.prediction?.all_probabilities || {}).map(([cat, prob]) => (
+                                  <div key={cat} className="flex items-center gap-2">
+                                      <span className="text-xs text-white w-16">{cat}</span>
+                                      <div className="flex-1 bg-slate-700 rounded-full h-2">
+                                          <div
+                                              className="bg-emerald-500 h-2 rounded-full transition-all"
+                                              style={{ width: `${(prob as number) * 100}%` }}
+                                          />
+                                      </div>
+                                      <span className="text-xs text-white">{((prob as number) * 100).toFixed(0)}%</span>
                                   </div>
-                                  <span className="text-xs text-white">{((prob as number) * 100).toFixed(0)}%</span>
-                                </div>
                               ))}
                             </div>
                           </div>
