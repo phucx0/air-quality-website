@@ -116,7 +116,7 @@ class AirQualityModel:
         
         # Đánh giá
         y_pred = pipeline.predict(X_test)
-        print(f"\n✅ Huấn luyện xong! F1 Score: {f1_score(y_test, y_pred, average='weighted'):.4f}")
+        print(f"\nHuấn luyện xong! F1 Score: {f1_score(y_test, y_pred, average='weighted'):.4f}")
         print("\nBáo cáo phân loại:")
         print(classification_report(y_test, y_pred, target_names=self.le.classes_))
         
@@ -136,12 +136,12 @@ def load_data(file_path):
     """Load và hiển thị thông tin cơ bản về dataset"""
     df = pd.read_csv(file_path)
     print("="*70)
-    print("📂 LOAD DỮ LIỆU")
+    print("LOAD DỮ LIỆU")
     print("="*70)
     print(f"✓ Đã đọc {len(df):,} dòng dữ liệu")
     print(f"✓ Số cột: {len(df.columns)}")
     print(f"✓ Các cột: {df.columns.tolist()}")
-    print(f"\n📊 Thống kê cơ bản:")
+    print(f"\nThống kê cơ bản:")
     print(df.describe())
     return df
 # ==============================

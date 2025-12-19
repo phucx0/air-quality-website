@@ -53,13 +53,13 @@ def load_model_from_file(model_path):
             'path': model_path
         }
     except Exception as e:
-        print(f"❌ Error loading model from {model_path}: {e}")
+        print(f"Error loading model from {model_path}: {e}")
         return None
 
 def load_all_models_from_folder(folder_path):
     """Load tất cả models từ một thư mục"""
     if not os.path.exists(folder_path):
-        print(f"⚠️  Folder {folder_path} không tồn tại")
+        print(f"Folder {folder_path} không tồn tại")
         return
     
     for filename in os.listdir(folder_path):
@@ -67,7 +67,7 @@ def load_all_models_from_folder(folder_path):
             model_path = os.path.join(folder_path, filename)
             model_id = filename.replace('.pkl', '')
             
-            print(f"📦 Loading model: {filename}...")
+            print(f"Loading model: {filename}...")
             model_data = load_model_from_file(model_path)
             
             if model_data and model_data['model']:
@@ -80,15 +80,15 @@ def load_all_models_from_folder(folder_path):
                     'has_feature_names': model_data['feature_names'] is not None,
                     'has_label_encoder': model_data['label_encoder'] is not None
                 }
-                print(f"   ✅ Loaded: {model_id}")
+                print(f"Loaded: {model_id}")
             else:
-                print(f"   ❌ Failed to load: {filename}")
+                print(f"Failed to load: {filename}")
 
 def load_predefined_models():
     """Load các models đã định nghĩa trong MODEL_PATHS"""
     for model_id, model_path in MODEL_PATHS.items():
         if os.path.exists(model_path):
-            print(f"📦 Loading model '{model_id}' from {model_path}...")
+            print(f"Loading model '{model_id}' from {model_path}...")
             model_data = load_model_from_file(model_path)
             
             if model_data and model_data['model']:
@@ -101,11 +101,11 @@ def load_predefined_models():
                     'has_feature_names': model_data['feature_names'] is not None,
                     'has_label_encoder': model_data['label_encoder'] is not None
                 }
-                print(f"   ✅ Model '{model_id}' loaded successfully")
+                print(f"Model '{model_id}' loaded successfully")
             else:
-                print(f"   ❌ Failed to load model '{model_id}'")
+                print(f"Failed to load model '{model_id}'")
         else:
-            print(f"   ⚠️  Model file not found: {model_path}")
+            print(f"Model file not found: {model_path}")
 
 def get_category_info(category_name):
     """Trả về màu sắc và thông tin cho mỗi category"""
@@ -439,7 +439,7 @@ def reload_models():
     model_metadata = {}
     
     print("\n" + "="*60)
-    print("🔄 RELOADING ALL MODELS...")
+    print("RELOADING ALL MODELS...")
     print("="*60)
     
     # Load predefined models
@@ -450,7 +450,7 @@ def reload_models():
         load_all_models_from_folder(MODELS_FOLDER)
     
     print("="*60)
-    print(f"✅ Reloaded {len(loaded_models)} models")
+    print(f" Reloaded {len(loaded_models)} models")
     print("="*60 + "\n")
     
     return jsonify({
@@ -464,9 +464,9 @@ def reload_models():
 def initialize_models():
     """Khởi tạo và load tất cả models khi start server"""
     print("\n" + "="*60)
-    print("🚀 AIR QUALITY PREDICTION API")
+    print("AIR QUALITY PREDICTION API")
     print("="*60)
-    print("📦 LOADING MODELS...")
+    print("LOADING MODELS...")
     print("="*60)
     
     # Load predefined models từ MODEL_PATHS
@@ -474,28 +474,28 @@ def initialize_models():
     
     # Load tất cả models từ MODELS_FOLDER
     if os.path.exists(MODELS_FOLDER):
-        print(f"\n📁 Scanning folder: {MODELS_FOLDER}")
+        print(f"\nScanning folder: {MODELS_FOLDER}")
         load_all_models_from_folder(MODELS_FOLDER)
     else:
-        print(f"\n⚠️  Folder '{MODELS_FOLDER}' not found. Create it to auto-load models.")
+        print(f"\nFolder '{MODELS_FOLDER}' not found. Create it to auto-load models.")
     
     print("\n" + "="*60)
-    print(f"✅ LOADED {len(loaded_models)} MODELS SUCCESSFULLY")
+    print(f" LOADED {len(loaded_models)} MODELS SUCCESSFULLY")
     print("="*60)
     
     if loaded_models:
-        print("\n📋 Available models:")
+        print("\nAvailable models:")
         for model_id in loaded_models.keys():
             print(f"   • {model_id}")
     else:
-        print("\n⚠️  NO MODELS LOADED!")
+        print("\nNO MODELS LOADED!")
         print("Please check:")
         print("   1. MODEL_PATHS in code")
         print("   2. Files exist at specified paths")
         print("   3. MODELS_FOLDER contains .pkl files")
     
     print("="*60)
-    print("📡 Server starting on http://localhost:5000")
+    print("Server starting on http://localhost:5000")
     print("="*60 + "\n")
 
 if __name__ == '__main__':
