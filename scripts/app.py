@@ -13,7 +13,7 @@ CORS(app)  # Cho phép CORS để frontend gọi được
 
 # QUAN TRỌNG: Đặt đường dẫn đến file model của bạn ở đây
 MODEL_PATHS = {
-    'default': 'air_quality_model.pkl',  # Model mặc định
+    'default': 'air_quality_v2.pkl',  # Model mặc định
     'hanoi': 'models/hanoi_model.pkl',   # Model cho Hà Nội
     'hcm': 'models/hcm_model.pkl',       # Model cho HCM
 }
